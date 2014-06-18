@@ -1,7 +1,7 @@
 require './app_academy.rb'
-
+require './saveable.rb'
 class Reply
-  
+  include Saveable
   def self.find_by_id(find_id)
     reply_info = AppAcademyDb.instance.execute(<<-SQL, find_id)
     SELECT
@@ -86,29 +86,35 @@ class Reply
   end
   
   def save
-    
     if self.id.nil?
-    
-      AppAcademyDb.instance.execute(<<-SQL, subject_id, parent_id, user_id, reply)
-      INSERT INTO
-        users(subject_id, parent_id, user_id, reply)
-      VALUES
-        (?,?,?,?)
-      SQL
-    
-      @id = AppAcademyDb.instance.last_insert_row_id
+      save_method
     else
-      AppAcademyDb.instance.execute(<<-SQL,subject_id, parent_id, user_id, reply)
-      UPDATE
-        replies
-      SET
-        subject_id = ?,
-        parent_id = ?,
-        user_id = ?,
-        reply = ?
-      WHERE
-        id =  #{@id}
-      SQL
+      update_method
     end
+    
+    
+    # if self.id.nil?
+#     
+#       AppAcademyDb.instance.execute(<<-SQL, subject_id, parent_id, user_id, reply)
+#       INSERT INTO
+#         users(subject_id, parent_id, user_id, reply)
+#       VALUES
+#         (?,?,?,?)
+#       SQL
+#     
+#       @id = AppAcademyDb.instance.last_insert_row_id
+#     else
+#       AppAcademyDb.instance.execute(<<-SQL,subject_id, parent_id, user_id, reply)
+#       UPDATE
+#         replies
+#       SET
+#         subject_id = ?,
+#         parent_id = ?,
+#         user_id = ?,
+#         reply = ?
+#       WHERE
+#         id =  #{@id}
+#       SQL
+#     end
   end
 end

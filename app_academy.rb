@@ -5,13 +5,14 @@ require './reply.rb'
 require './user.rb'
 require './question_like.rb'
 require './question_follower.rb'
+require './saveable.rb'
 
 
 
 class AppAcademyDb < SQLite3::Database
   
   include Singleton
-  
+  include Saveable
   def initialize
     super ('aa_questions.db')
     

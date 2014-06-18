@@ -1,7 +1,7 @@
-
+require './saveable.rb'
 
 class Question
-  
+  include Saveable
   def self.find_by_id(find_id)
     question_info = AppAcademyDb.instance.execute(<<-SQL, find_id)
     SELECT
@@ -68,28 +68,33 @@ class Question
   end
   
   def save
-    
     if self.id.nil?
-    
-      AppAcademyDb.instance.execute(<<-SQL, title, body, user_id)
-      INSERT INTO
-        users(title, body, user_id)
-      VALUES
-        (?,?,?)
-      SQL
-    
-      @id = AppAcademyDb.instance.last_insert_row_id
+      save_method
     else
-      AppAcademyDb.instance.execute(<<-SQL,title, body, user_id)
-      UPDATE
-        questions
-      SET
-        title = ?,
-        body = ?,
-        user_id = ?
-      WHERE
-        id =  #{@id}
-      SQL
+      update_method
     end
+    
+    # if self.id.nil?
+ #    
+ #      AppAcademyDb.instance.execute(<<-SQL, title, body, user_id)
+ #      INSERT INTO
+ #        users(title, body, user_id)
+ #      VALUES
+ #        (?,?,?)
+ #      SQL
+ #    
+ #      @id = AppAcademyDb.instance.last_insert_row_id
+ #    else
+ #      AppAcademyDb.instance.execute(<<-SQL,title, body, user_id)
+ #      UPDATE
+ #        questions
+ #      SET
+ #        title = ?,
+ #        body = ?,
+ #        user_id = ?
+ #      WHERE
+ #        id =  #{@id}
+ #      SQL
+ #    end
   end
 end

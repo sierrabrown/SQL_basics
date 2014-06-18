@@ -1,4 +1,4 @@
-
+require './saveable.rb'
 
 class User
   
@@ -6,6 +6,7 @@ class User
   #   results = AppAcademyDb.instance.execute('SELECT * FROM users')
   #   results.map { |result| User.new(result) }
   # end
+  include Saveable
   
   def self.find_by_id(find_id)
     user_info = AppAcademyDb.instance.execute(<<-SQL, find_id)
@@ -42,7 +43,7 @@ class User
   attr_accessor :id, :fname, :lname
   
   def initialize(options = {})
-    @id = options['id'].to_i
+    @id = options['id']
     @fname = options['fname']
     @lname = options['lname']
   end
@@ -73,25 +74,9 @@ class User
   def save
     
     if self.id.nil?
-    
-      AppAcademyDb.instance.execute(<<-SQL, fname, lname)
-      INSERT INTO
-        users(fname, lname)
-      VALUES
-        (?,?)
-      SQL
-    
-      @id = AppAcademyDb.instance.last_insert_row_id
+      save_method
     else
-      AppAcademyDb.instance.execute(<<-SQL,fname,lname)
-      UPDATE
-        users
-      SET
-      fname = ?,
-      lname = ?
-      WHERE
-      id =  #{@id}
-      SQL
+      update_method
     end
   end
 end
